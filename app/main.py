@@ -2,8 +2,9 @@ import logging
 import json
 from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException, status, Depends, Request
+from fastapi import FastAPI, HTTPException, status, Depends
 from pydantic import BaseModel
+from prometheus_fastapi_instrumentator import Instrumentator
 from scalar_fastapi import get_scalar_api_reference
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -36,6 +37,8 @@ app = FastAPI(
     docs_url=None,
     redoc_url=None,
 )
+
+Instrumentator().instrument(app).expose(app)
 
 
 @app.get("/docs", include_in_schema=False)
@@ -76,8 +79,8 @@ def health(db: Session = Depends(get_db)):
     return {"status": "ok" if db_status == "ok" else "degraded", "database": db_status}
 
 
-@app.get("/metrics", tags=["health"])
-def metrics(db: Session = Depends(get_db)):
+@app.get("/stats", tags=["health"])
+def stats(db: Session = Depends(get_db)):
     total = db.query(Order).count()
     open_orders = db.query(Order).filter(Order.status == "open").count()
     cancelled = db.query(Order).filter(Order.status == "cancelled").count()
