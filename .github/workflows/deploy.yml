@@ -45,11 +45,18 @@ jobs:
 
     - name: Configurar kubectl
       run: |
-        echo "${{ secrets.MGC_KUBECONFIG }}" | base64 -d > kubeconfig.yaml
+        echo "${{ secrets.MGC_KUBECONFIG }}" > kubeconfig.yaml
+
+    - name: Criar Secret do banco
+      run: |
+        export KUBECONFIG=kubeconfig.yaml
+        kubectl create secret generic db-secret \
+          --from-literal=url=${{ secrets.DATABASE_URL }} \
+          --dry-run=client -o yaml | kubectl apply -f -
 
     - name: Deploy no Kubernetes
       run: |
         export KUBECONFIG=kubeconfig.yaml
-        sed -i "s|<SEU_REGISTRY>|${{ secrets.MGC_REGISTRY_NAME }}|g" k8s/deployment.yaml
-        kubectl apply -f k8s/
+        export MGC_REGISTRY_NAME=${{ secrets.MGC_REGISTRY_NAME }}
+        envsubst < k8s/app.yaml | kubectl apply -f -
         kubectl rollout status deployment/cloud-application

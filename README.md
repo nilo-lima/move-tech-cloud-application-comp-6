@@ -38,15 +38,6 @@ Acesse a documentação interativa em: http://localhost:8000/docs
 
 ---
 
-## Configuração do banco de dados no Kubernetes
-
-```bash
-kubectl create secret generic db-secret \
-  --from-literal=url=postgresql://user:password@<host-mgc>/orders
-```
-
----
-
 ## Secrets necessários no GitHub
 
 | Secret | Descrição |
@@ -54,8 +45,8 @@ kubectl create secret generic db-secret \
 | `MGC_REGISTRY_USER` | Usuário do Container Registry da MGC |
 | `MGC_REGISTRY_PASSWORD` | Senha do Container Registry da MGC |
 | `MGC_REGISTRY_NAME` | Nome do seu registry na MGC |
-| `MGC_KUBECONFIG` | Conteúdo do kubeconfig em base64 (`base64 -w0 kubeconfig.yaml`) |
-
+| `MGC_KUBECONFIG` | Conteúdo do arquivo `kubeconfig.yaml` (cole o conteúdo diretamente) |
+| `DATABASE_URL` | String de conexão do PostgreSQL (`postgresql://user:pass@host/orders`) |
 ---
 
 ## Solução completa de referência
