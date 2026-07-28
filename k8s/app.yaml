@@ -18,7 +18,7 @@ spec:
       - name: registry-secret
       containers:
       - name: cloud-application
-        image: container-registry.br-se1.magalu.cloud/${MGC_REGISTRY_NAME}/cloud-application:latest
+        image: container-registry.br-se1.magalu.cloud/${MGC_REGISTRY_NAME}/cloud-application:${IMAGE_TAG}
         ports:
         - containerPort: 8000
         env:

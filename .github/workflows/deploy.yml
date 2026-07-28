@@ -39,9 +39,10 @@ jobs:
 
     - name: Build e push da imagem
       run: |
-        IMAGE=${{ env.REGISTRY }}/${{ secrets.MGC_REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:latest
-        docker build -t $IMAGE .
-        docker push $IMAGE
+        BASE=${{ env.REGISTRY }}/${{ secrets.MGC_REGISTRY_NAME }}/${{ env.IMAGE_NAME }}
+        docker build -t $BASE:${{ github.sha }} -t $BASE:latest .
+        docker push $BASE:${{ github.sha }}
+        docker push $BASE:latest
 
     - name: Configurar kubectl
       run: |
@@ -67,5 +68,6 @@ jobs:
       run: |
         export KUBECONFIG=kubeconfig.yaml
         export MGC_REGISTRY_NAME=${{ secrets.MGC_REGISTRY_NAME }}
+        export IMAGE_TAG=${{ github.sha }}
         envsubst < k8s/app.yaml | kubectl apply -f -
         kubectl rollout status deployment/cloud-application
