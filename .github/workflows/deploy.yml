@@ -70,4 +70,6 @@ jobs:
         export MGC_REGISTRY_NAME=${{ secrets.MGC_REGISTRY_NAME }}
         export IMAGE_TAG=${{ github.sha }}
         envsubst < k8s/app.yaml | kubectl apply -f -
+        kubectl apply -f k8s/hpa.yaml
+        kubectl apply -f k8s/servicemonitor.yaml
         kubectl rollout status deployment/cloud-application
